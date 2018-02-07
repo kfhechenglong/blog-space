@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<script type="text/javascript">   
+		"use strict"
+		// function* f(){
+		// 	console.log(1);
+		// 	yield 1+2;
+		// 	console.log(2)
+		// 	yield 2+3;
+		// 	console.log(3)
+		// }
+		// var generator = f();
+		// console.log(generator.next());
+		// console.log(generator.next());
+		// console.log(generator.next());
+		// var arr = [1,[[2,3],4],[5,6]];
+		// var flat = function* (a){
+		// 	var length = a.length;
+		// 	for (var i = 0; i < length; i++) {
+		// 		var item = a[i];
+		// 		if(typeof item !== 'number'){
+		// 			yield* flat(item);
+		// 		}else{
+		// 			yield item;
+		// 		}
+		// 	}
+		// }
+		// var data = flat(arr);
+		// console.log(data)
+		// for (var f of data){
+		// 	console.log(f)
+		// }
+		// function* demo(){
+		// 	console.log('hello' + (yield))
+		// 	console.log('hello' + (yield 123))
+		// }
+		// var a = demo()
+		// console.log(a.next())
+		// console.log(a.next())
+		// console.log(a.next())
+		// 
+		// var myIterable = {};
+		// myIterable[Symbol.iterator] = function*(){
+		// 	yield 1;
+		// 	yield 2;
+		// 	yield 3;
+		// };
+		// var arr = [...myIterable];
+		// console.log(arr)
+		// function* gen(){}
+		// var g = gen();
+		// console.log(g)
+		// console.log(g[Symbol.iterator]())
+		// 
+		// function* dataConsumer(){
+		// 	console.log('Started');
+		// 	console.log(`1.${yield}`);
+		// 	console.log(`2.${yield}`);
+		// 	return 'result'
+		// }
+		// let genObj = dataConsumer();
+		// genObj.next();
+		// genObj.next('a');
+		// genObj.next('b');
+		// 
+		// function warpper(generatorFunction){
+		// 	return function(...agrs){
+		// 		let generatorObject = generatorFunction(...agrs);
+		// 		generatorObject.next();
+		// 		return generatorObject;
+		// 	}
+		// }
+		// const warpped = warpper(function* (){
+		// 	console.log(`First input:${yield}`)
+		// 	return `done`
+		// });
+		// warpped().next('hello')
+		
+		// function* foo(){
+		// 	yield 1;
+		// 	yield 2;
+		// 	yield 3;
+		// 	yield 4;
+		// 	yield 5;
+		// 	return 6;
+		// }
+		// for(var a of foo()){
+		// 	console.log(a)
+		// }
+		
+		// function* fibonacci(){
+		// 	let [prev,curr] = [0,1];
+		// 	for(;;){
+		// 		[prev,curr] = [curr,prev +curr];
+		// 		yield curr;
+		// 	}
+		// }
+		// for( let n of fibonacci()){
+		// 	if(n > 1000) break;
+		// 	console.log(n)
+		// }
+		// 
+		
+		function* objectEntries(obj){
+			let propKeys = Reflect.ownKeys(obj);
+			for(let propKey of propKeys){
+				yield [propKey,obj[propKey]]
+			}
+		}
+		let jane = {first:'jane',last:'doe'};
+		for(let [key,value] of objectEntries(jane)){
+			console.log(`${key}:${value}`)
+		}
+	</script>
+</head>
+
+<body>
+
+</body>
+
+</html>
