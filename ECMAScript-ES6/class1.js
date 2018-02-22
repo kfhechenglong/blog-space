@@ -17,7 +17,7 @@ class Point {
         return '(' + this.x + ',' + this.y + ')';
     }
 }
-var a = new Point(1,2)
+var a = new Point(1,2);
 // console.log(a.toString())
 // console.log(typeof Point);
 // console.log(Point === Point.prototype.constructor)
@@ -25,11 +25,11 @@ console.log(a.constructor === Point.prototype.constructor)
 
 const toValue = ()=>{
     return (222 + 111)
-}
+};
 // 类的对象都定义在prototype对象上面，所以类的新方法可以添加在Prototype对象上面
 Object.assign(Point.prototype,{
     toValue
-})
+});
 console.log(a.toValue());
 // class内部定义的方法是不可枚举的，这一点是与ES5的行为不一致
 console.log(Object.keys(Point.prototype))
