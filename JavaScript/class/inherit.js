@@ -20,5 +20,4 @@ function inherit(p){
     return new f();
 }
 
-exports = inherit
 
