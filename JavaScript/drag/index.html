@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <script src="./../scroll/getScrollOffsets.js"></script>
+        <script src="./drag.js"></script>
+        
+    </head>
+    <style>
+        .w{
+            position: absolute;
+            left:100px;
+            top:100px;
+            width:250px;
+            background-color: white;
+            border: solid black;
+        }
+        .i{
+            background-color: gray;
+            border-bottom: dotted black;
+            padding:3px;
+            font-family:sans-serif;
+            font-weight: bold;
+        }
+    </style>
+    <body>
+        <!-- 要拖动的元素 -->
+        <div class="w">
+            <div class="i" onmousedown="drag(this.parentNode,event);">
+                拖动
+            </div>
+            <!-- 可以拖动的元素 -->
+            <p>
+                测试内容！
+            </p>
+        </div>
+        
+    </body>
+</html>

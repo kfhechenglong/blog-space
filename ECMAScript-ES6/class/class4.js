@@ -12,7 +12,6 @@ function Person(name){
 const person = new Person('老何');
 // const errPerson = Person.call(person,'old');
 
-
 class Rectangle {
     constructor (length,width){
         console.log(new.target === Rectangle);
