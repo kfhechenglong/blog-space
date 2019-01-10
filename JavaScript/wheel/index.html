@@ -7,6 +7,18 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <a href="./test.html">ces</a>
 </body>
+<script type="text/javascript">
+window.onunload = function (e){
+	console.log(e)
+	return false
+}
+window.addEventListener('online',function(e){
+	console.log(e)
+},false);
+window.addEventListener('offline',function(e){
+	console.log(e)
+},false)
+</script>
 </html>
