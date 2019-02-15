@@ -71,9 +71,38 @@ function resolvePromise(promise_2,x,resolve,reject) {
 }
 
 //
-Promise.prototype.then = function(onFulfilled,onRejcect){
+Promise.prototype.then = function(onFulfilled,onReject){
   // 检查是否有成功和失败时的回调函数，没有就定义回调函数
   onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function(value) { return value};
-  onRejcect = typeof onRejcect === 'function' ? onRejcect : function(reason) {return reason};
+  onReject = typeof onReject === 'function' ? onReject : function(reason) {return reason};
+  let that = this;
+  let promise2;
+  if(that.status === 'fulfilled') {
+    promise2 = new Promise(function (resolve,reject) {
+      let x = onFulfilled(that.value);
+      resolvePromise(promise2,x,resolve,reject);
+    })
+  }
+  if(that.status === 'rejected') {
+    promise2 = new Promise(function(resolve,reject) {
+      let x = onReject(that.value);
+      resolvePromise(promise2,x,resolve,reject);
+    })
+  }
+  //
+  if(that.status === 'pending') {
+    promise2 = new Promise(function(resolve,reject) {
+      that.onResolvedCallbacks.push(function(){
+        let x = onFulfilled(that.value);
+        resolvePromise(promise2,x,resolve,reject);
+      })
+      that.onRejectCallbacks.push(function() {
+        let x = onReject(that.value);
+        resolvePromise(promise2,x,resolve,reject);
+      })
+    })
+  }
+  return promise2;
 }
 
+module.exports = Promise;
