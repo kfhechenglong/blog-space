@@ -14,7 +14,7 @@ function sort(elements) {
 				elements[j] = elements[j +1];
 				elements[j + 1] = temp;
 			}
-		}
+    }
 	}
 };
 var arr1 = [3,1,5,4,6,2,10,22,44,33,55,8,9];
