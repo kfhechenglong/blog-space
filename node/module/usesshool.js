@@ -12,7 +12,7 @@
 
 // 当你想知道一个模块的绝对路径的时候，又不想去加载该模块，可以用resolve方法
 console.log(require.resolve('./school'));
-console.log(require.main);//入口模块
+
 
 let useschool = require('./school');
 console.log(useschool);
