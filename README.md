@@ -1,2 +1,2 @@
 # ECMAScript
-only demo
+demo
