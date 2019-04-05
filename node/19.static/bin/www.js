@@ -27,5 +27,5 @@ let argv = yargs.options('d',{
 .example(
     'server -d / -p 8080 -o localhost'
 ).help('h').argv;
-let server = new Server();
+let server = new Server(argv);
 server.start();
