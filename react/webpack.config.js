@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-    entry: './router/index.js',
+    entry: './src/index.js',
     output: {
         path: path.resolve('dist'),
         filename: 'bundle.js'
@@ -12,12 +12,12 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                include: path.resolve('router'),
+                include: path.resolve('src'),
                 use: {
                     loader: 'babel-loader',
                     options: {
                         presets: [
-                            "env", "stage-0", "react"
+                            "env", "@babel/preset-react"
                         ]
                     }
                 }
