@@ -1,5 +1,10 @@
+/*
+ * @Author: 绝对零度
+ * @Date: 2019-05-26 12:53:30
+ * @Last Modified by: 绝对零度
+ * @Last Modified time: 2019-05-26 12:53:59
+ */
 import React ,{Component} from 'react';
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types'
 class Title extends Component {
     static contextTypes = {
@@ -26,12 +31,15 @@ class Header extends Component {
 };
 class Main extends Component {
     static contextTypes = {
-        color: PropTypes.string
+        color: PropTypes.string,
+        setColor:PropTypes.func
     }
     render() {
         return (
             <div>
                 <h1 style={{ color: this.context.color }}>我是内容</h1>
+                <button onClick={() => {this.context.setColor('green')}}>变绿</button>
+                <button onClick={() => { this.context.setColor('yellow') }}>变黄</button>
             </div>
         )
     }
@@ -43,7 +51,8 @@ class Main extends Component {
 */
 class HomePage extends Component {
     static childContextTypes = {
-        color:PropTypes.string
+        color:PropTypes.string,
+        setColor: PropTypes.func
     }
     constructor() {
         super();
@@ -53,8 +62,12 @@ class HomePage extends Component {
     }
     getChildContext () {
         return {
-            color:this.state.color
+            color:this.state.color,
+            setColor:this.setColor
         }
+    }
+    setColor = (color) => {
+        this.setState({color});
     }
     render() {
         return(

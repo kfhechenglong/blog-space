@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import HomePage from './components/HomePage'
+import Memo from './components/highoder/index'
 function A () {
     return (<div>111</div>)
 }
-ReactDOM.render(<HomePage />, document.querySelector('#root'));
+ReactDOM.render(<Memo />, document.querySelector('#root'));
