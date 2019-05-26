@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-    entry: './src/index.js',
+    entry: './router/index.js',
     output: {
         path: path.resolve('dist'),
         filename: 'bundle.js'
@@ -12,7 +12,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                include: path.resolve('src'),
+                include: path.resolve('router'),
                 use: {
                     loader: 'babel-loader',
                     options: {
