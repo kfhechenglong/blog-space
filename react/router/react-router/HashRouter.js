@@ -2,7 +2,8 @@ import React ,{Component} from 'react'
 import PropTypes from 'prop-types'
 export default class HashRouter extends Component {
     static childContextTypes = {
-        location:PropTypes.object
+        location:PropTypes.object,
+        history: PropTypes.object,
     }
     constructor(props) {
         super(props);
@@ -10,14 +11,19 @@ export default class HashRouter extends Component {
     }
     getChildContext() {
         return {
-            location:{pathname:window.location.hash.slice(1) || '/'}
+            location:{pathname:window.location.hash.slice(1) || '/'},
+            history:{
+                push(path) {
+                    window.location.hash = path;
+                }
+            }
         }
     }
     // 如果没有哈希值，默认添加'/'
     componentDidMount() {
         window.location.hash = window.location.hash || '/';
         let render = () => {
-            this.setState();
+            this.setState({});
         }
         window.addEventListener('hashchange',render);
     }
