@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import 'bootstrap3/dist/css/bootstrap.css'
 import App from './components/App.js'
 import User from "./components/User";
+import Protected from "./components/Protected";
+import Login from "./components/Login";
 // HashRouter 通过路径里面的哈希实现
 // BrowserRouter 是通过h5中的history实现的
 // import { HashRouter as Router, Route } from 'react-router-dom'
@@ -19,7 +21,8 @@ ReactDOM.render(
     <App>
         <Route path="/home" component={Home} />
         <Route path="/user" component={User} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/login" component={Login} />
+        <Protected path="/profile" component={Profile} />
     </App>,
     document.querySelector('#root')
 )

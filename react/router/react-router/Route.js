@@ -6,10 +6,21 @@ export default class Route extends Component {
         history:PropTypes.object
     }
     render() {
-        let { path, component:Component} = this.props;
-        let { location: {pathname}} = this.context;
+        let { path, component:Component,render} = this.props;
+        let { location: { pathname }, location} = this.context;
+
+        let props = {
+            location,
+            history:this.context.history
+        }
         if(path == pathname || pathname.startsWith(path)) {
-            return <Component location={this.context.location} history={this.context.history}/>
+            if(Component) {
+                return <Component location={this.context.location} history={this.context.history} />
+            } else if (render) {
+                return render(props)
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
