@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,body{
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="Iframe" src="https://weibo.com/u/2034570253/home?wvr=5&sudaref=www.sina.com.cn" frameborder="0" height="100%" width="100%"></iframe>
+</body>
+</html>
+<script>
+    var getIframe = document.getElementById('Iframe')
+    var src = "https://weibo.com/u/2517457760?is_all=1"
+    setInterval(() => {
+        getIframe.setAttribute('src' ,src);
+        console.log(1)
+    },2000)
+</script>

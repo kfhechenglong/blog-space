@@ -1,6 +1,7 @@
 const qs = require('querystring')
 const fs = require('fs');
 require('http').createServer(function(req,res) {
+    console.log(req)
     if('GET' === req.method && '/web/images' ==  req.url.substring(0,11)) {
         fs.stat(__dirname + req.url ,function  (err,stat) {
             if(err || !stat.isFile()) {
