@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>头部的frame</title>
+</head>
+<body>
+    <div>
+            头部的frame
+    </div>
+</body>
+<script>
+    var b = 0
+    console.log(top.frames[0]);
+    let div = document.getElementsByTagName('div')[0];
+    div.onclick = function() {
+        console.log('点击了！');
+        console.log(top.frames);
+    }
+</script>
+</html>
