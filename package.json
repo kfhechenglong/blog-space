@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "http-proxy": "^1.17.0",
+    "http-proxy": "^1.18.1",
     "mime": "^2.4.0",
     "yargs": "^13.2.2"
   },
