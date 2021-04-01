@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="testRouter">testRouter</div>
+  </body>
+</html>
+
+<script>
+  function Router () {
+    this.routes = {};
+    this.currentUrl = '';
+  }
+  Router.prototype.add = function (path, callback) {
+    this.routes[path] = callback || function() {}
+  };
+  Router.prototype.refresh = function() {
+    this.currentUrl = location.hash.replace(/^#*/,'');
+    console.log(this.currentUrl)
+    if (this.routes[this.currentUrl]) {
+      this.routes[this.currentUrl]();
+    } else {
+      document.getElementById('testRouter').innerHTML = '没有匹配到路由'
+    }
+  };
+  Router.prototype.load = function() {
+    window.addEventListener('load', this.refresh.bind(this), false);
+    window.addEventListener('hashchange', this.refresh.bind(this), false);
+  };
+  Router.prototype.navigate = function (path) {
+    path = path || '';
+    location.href = location.href.replace(/#(.*)$/, '') + '#' + path;
+  };
+  window.Router = new Router();
+  window.Router.add('/test', function() {
+    console.log('test')
+    setTimeout(function () {
+      document.getElementById('testRouter').innerHTML = 'success'
+    },1000);
+  })
+  window.Router.load()
+</script>
