@@ -107,3 +107,73 @@ program.parse()
 $ node ./version.js
 # 输出 1.0.0
 ```
+### [命令command](./examples/command.js)
+`.command()`的第一个参数为命令名称。命令参数可以跟在名称后面，也可以用`.argument()`单独指定。参数可为必选的（尖括号表示）、可选的（方括号表示）或变长参数（点号表示，如果使用，只能是最后一个参数）。
+
+```js
+program
+.command('clone <source> [destination]')
+.description('clone a repository into a newly created directory')
+.action((source, destination) => {
+    console.log('source', source)
+    console.log('destination', destination)
+    console.log('called')
+});
+```
+执行命令
+```sh
+$ node .\command.js clone args otherArgs
+# 输出
+# source args
+# destination otherArgs
+# called
+```
+#### 多参数命令
+在`Command`对象上使用`.argument()`来按次序指定命令参数。该方法接受参数名称和参数描述。参数可为必选的（尖括号表示，例如<required>）或可选的（方括号表示，例如[optional]）
+
+```js
+program
+.argument('<username>', 'user to login')
+.argument('<password>', 'password to login')
+.action((name, des) => {
+    console.log(name, des)
+});
+// or
+program
+.argument('<username> <password>')
+.action((name, des) => {
+    console.log(name, des)
+});
+```
+
+执行
+
+```sh
+$ node .\command.js hechenglong 123456
+# 输出
+# hechenglong 123456
+```
+#### 数组传参
+
+```js
+program
+  .version('0.1.0')
+  .command('rmdir')
+  .argument('<dirs...>')
+  .action(function (dirs) {
+    dirs.forEach((dir) => {
+      console.log('rmdir %s', dir);
+    });
+  });
+```
+执行
+
+```sh
+$ node .\command.js rdir dir1 dir2 dir3
+# 输出
+# rmdir dir1
+# rmdir dir2
+# rmdir dir3
+```
+### [帮助信息](./examples/help.js)
+帮助信息是 `Commander` 基于你的程序自动生成的，默认的帮助选项是`-h`,`--help`。
