@@ -2,7 +2,7 @@
 const bucket = new WeakMap()
 const data = {
   foo: 1,
-  bar: true
+  bar: 2
 }
 let activeEffect = null
 // 创建一个栈，收集副作用函数，栈顶是当前要执行的副作用函数
@@ -11,7 +11,7 @@ const effectStack = []
 const obj = new Proxy(data, {
   // 拦截原始数据的获取
   get(target, key) {
-    console.log('get')
+    // console.log('get')
     // 追踪函数
     track(target, key)
     // 返回要获取读取的值
@@ -19,7 +19,7 @@ const obj = new Proxy(data, {
   },
   // 拦截设置操作
   set(target, key, newVal) {
-    console.log('set')
+    // console.log('set')
     // 先将要设置的值进行赋值操作
     target[key] = newVal;
     trigger(target, key)
@@ -83,15 +83,21 @@ function effect(fn, options = {}) {
     activeEffect = effectFn
     // 副作用函数入栈
     effectStack.push(effectFn)
-    fn()
+    const res = fn()
     // 在当前副作用函数执行完毕后，将当前的副作用函数从栈中弹出来，并把activeEffect还原成之前的值
     effectStack.pop();
     activeEffect = effectStack[effectStack.length - 1]
+    return res
   }
   // 用来存储所有与该副作用函数相关联的依赖集合
   effectFn.options = options
   effectFn.deps = []
-  effectFn()
+  // 懒执行
+  if(!options.lazy) {
+    effectFn()
+  }
+  // 将副作用函数作为返回值返回，提供调用
+  return effectFn
 }
 // f
 function cleanup (effectFn) {
@@ -103,16 +109,66 @@ function cleanup (effectFn) {
   effectFn.deps.length = 0
 }
 
-let temp1, temp2;
-effect(function effectFn1() {
-  console.log(obj.foo)
-}, {
-  scheduler (fn) {
-    console.log('调度函数')
-    fn()
+// 定义一个任务队列
+const jobQueue = new Set()
+const p = Promise.resolve()
+// 定义一个变量标识代表是否正在刷新队列
+let isFlushing = false;
+function flushJob() {
+  if(isFlushing) {
+    return false
   }
-})
+  isFlushing = true
+  p.then(() => {
+    jobQueue.forEach(job => job())
+  }).finally(() => {
+    isFlushing = false
+  })
+}
+
+// effect(() => {
+//   console.log(obj.foo)
+// },{
+//   scheduler(fn) {
+//     jobQueue.add(fn)
+//     flushJob()
+//   }
+// })
+
+
+// 定义计算属性
+function computed (getter) {
+  let value = null
+  let dirty = true
+  const effectFn = effect(
+    getter,
+    {
+      lazy: true,
+      scheduler() {
+        // 数据响应时，将调度器中值设置为true
+        dirty = true
+      }
+    }
+  )
+  const obj = {
+    get value() {
+      if (dirty) {
+        // 为true时，每次均获取最新的数据
+        value = effectFn()
+        // 读取一次数据后，将标识设置为false,避免重复无用计算
+        dirty = false
+      }
+      return value
+    }
+  }
+  return obj
+}
+
+const sumRes = computed(() => obj.foo + obj.bar)
+console.log(sumRes.value)
 obj.foo++
+obj.foo++
+console.log(sumRes.value)
 // setTimeout(() => {
 //   obj.text = '自动修改了数据!'
 // }, 1000)
