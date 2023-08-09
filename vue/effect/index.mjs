@@ -1,35 +1,36 @@
 // 一个简单的响应系统
 const bucket = new WeakMap()
-const data = {
-  foo: 1,
-  bar: 2
-}
+
 let activeEffect = null
 // 创建一个栈，收集副作用函数，栈顶是当前要执行的副作用函数
 const effectStack = []
 // 对原始数据进行代理
-const obj = new Proxy(data, {
-  // 拦截原始数据的获取
-  get(target, key) {
-    // console.log('get')
-    // 追踪函数
-    track(target, key)
-    // 返回要获取读取的值
-    return target[key]
-  },
-  // 拦截设置操作
-  set(target, key, newVal) {
-    // console.log('set')
-    // 先将要设置的值进行赋值操作
-    target[key] = newVal;
-    trigger(target, key)
-    return true
-  }
-})
+export function proxy (data) {
+  const obj = new Proxy(data, {
+    // 拦截原始数据的获取
+    get(target, key) {
+      // console.log('get')
+      // 追踪函数
+      track(target, key)
+      // 返回要获取读取的值
+      return target[key]
+    },
+    // 拦截设置操作
+    set(target, key, newVal) {
+      // console.log('set')
+      // 先将要设置的值进行赋值操作
+      target[key] = newVal;
+      trigger(target, key)
+      return true
+    }
+  })
+  return obj
+}
+
 
 // 独立封装track函数追踪变化
 
-function track(target,key) {
+export function track(target,key) {
   // 将副作用函数添加到桶中
   if (!activeEffect) {
     return target[key]
@@ -52,7 +53,7 @@ function track(target,key) {
   activeEffect.deps.push(deps)
 }
 // 在set拦截函数内调用trigger函数触发响应变化
-function trigger(target, key) {
+export function trigger(target, key) {
   // 变量副作用函数桶，并执行其中的函数
   const depsMap = bucket.get(target)
   if (!depsMap) return false
@@ -76,7 +77,7 @@ function trigger(target, key) {
   });
 }
 
-function effect(fn, options = {}) {
+export function effect(fn, options = {}) {
   const effectFn = () => {
     // 调用cleanup函数完成清理
     cleanup(effectFn)
@@ -135,47 +136,3 @@ function flushJob() {
 //   }
 // })
 
-
-// 定义计算属性
-function computed (getter) {
-  let value = null
-  let dirty = true
-  const effectFn = effect(
-    getter,
-    {
-      lazy: true,
-      scheduler() {
-        // 数据响应时，将调度器中值设置为true
-        if(!dirty) {
-          dirty = true
-          // 当计算属性依赖的响应式数据变化时，我们需要手动调用trigger函数来触发响应
-          trigger(obj, 'value')
-        }
-      }
-    }
-  )
-  const obj = {
-    get value() {
-      if (dirty) {
-        // 为true时，每次均获取最新的数据
-        value = effectFn()
-        // 读取一次数据后，将标识设置为false,避免重复无用计算
-        dirty = false
-      }
-      // 当读取value时，手动调用track函数进行追踪
-      track(obj, 'value')
-      return value
-    }
-  }
-  return obj
-}
-
-const sumRes = computed(() => obj.foo + obj.bar)
-effect(() => {
-  console.log(sumRes.value)
-})
-obj.foo++
-obj.foo++
-// setTimeout(() => {
-//   obj.text = '自动修改了数据!'
-// }, 1000)
