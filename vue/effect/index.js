@@ -146,7 +146,11 @@ function computed (getter) {
       lazy: true,
       scheduler() {
         // 数据响应时，将调度器中值设置为true
-        dirty = true
+        if(!dirty) {
+          dirty = true
+          // 当计算属性依赖的响应式数据变化时，我们需要手动调用trigger函数来触发响应
+          trigger(obj, 'value')
+        }
       }
     }
   )
@@ -158,6 +162,8 @@ function computed (getter) {
         // 读取一次数据后，将标识设置为false,避免重复无用计算
         dirty = false
       }
+      // 当读取value时，手动调用track函数进行追踪
+      track(obj, 'value')
       return value
     }
   }
@@ -165,10 +171,11 @@ function computed (getter) {
 }
 
 const sumRes = computed(() => obj.foo + obj.bar)
-console.log(sumRes.value)
+effect(() => {
+  console.log(sumRes.value)
+})
 obj.foo++
 obj.foo++
-console.log(sumRes.value)
 // setTimeout(() => {
 //   obj.text = '自动修改了数据!'
 // }, 1000)
