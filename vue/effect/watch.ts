@@ -1,4 +1,4 @@
-import {proxy, effect, trigger, track} from './index.mjs'
+import {proxy, effect, trigger, OptionsType} from './index.js'
 const data = {
   foo: 1,
   bar: 2
@@ -8,9 +8,14 @@ const getProxy = proxy(data);
 
 // watch
 
-export function watch(source, cb, options = {}) {
+interface WatchOptionType {
+  flush? : string
+  immediate?:boolean
+}
+
+export function watch(source: (() => any), cb: { (oldValue: any, newValue: any): void; (arg0: any, arg1: any): void; }, options:WatchOptionType = {}) {
   // 定义getter，表示watch可以接收一个getter
-  let getter = null
+  let getter: (() => any)
   if (typeof source === 'function') {
     // 如果传入的数据是一个函数，则直接赋值值getter
     getter = source
@@ -19,7 +24,7 @@ export function watch(source, cb, options = {}) {
     getter = () => traverse(source)
   }
   // 定义监听执行前的旧值和新值
-  let oldValue, newValue
+  let oldValue: any, newValue
 
   const job = () => {
     // 先重新执行一下副作用函数，得到更新的值
@@ -33,7 +38,14 @@ export function watch(source, cb, options = {}) {
     () => getter(),
     {
       lazy: true,
-      scheduler: job
+      scheduler: () => {
+        if (options.flush === 'post') {
+          const p = Promise.resolve()
+          p.then(job)
+        } else {
+          job()
+        }
+      }
     }
   )
   if (options.immediate) {
@@ -45,7 +57,7 @@ export function watch(source, cb, options = {}) {
   }
 }
 
-function traverse(value, seen = new Set()) {
+function traverse(value: any, seen = new Set()) {
   // 如果要监听的值是原始值或者是空值，或者是已经读取过的值，则什么都不做
   if (typeof value !== 'object' || value === null || seen.has(value)) return;
   // 将要监听的数据放到seen中，代表遍历读取过，避免循环引用引起死循环

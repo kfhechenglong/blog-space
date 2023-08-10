@@ -1,14 +1,30 @@
 // 一个简单的响应系统
 const bucket = new WeakMap()
 
-let activeEffect = null
+let activeEffect:any = null
 // 创建一个栈，收集副作用函数，栈顶是当前要执行的副作用函数
-const effectStack = []
+const effectStack: any = []
+interface TargetType {
+  
+}
+
+export interface OptionsType {
+  lazy?: boolean
+  scheduler?: (a?:EffectFnType) => any
+}
+
+export interface EffectFnType {
+  (): any
+  options: OptionsType
+  deps: Set<EffectFnType>[]
+}
+
+export type GetterHandlerType = () => any
 // 对原始数据进行代理
-export function proxy (data) {
+export function proxy (data: any) {
   const obj = new Proxy(data, {
     // 拦截原始数据的获取
-    get(target, key) {
+    get(target, key: string) {
       // console.log('get')
       // 追踪函数
       track(target, key)
@@ -27,10 +43,9 @@ export function proxy (data) {
   return obj
 }
 
-
 // 独立封装track函数追踪变化
 
-export function track(target,key) {
+export function track(target: any, key: string) {
   // 将副作用函数添加到桶中
   if (!activeEffect) {
     return target[key]
@@ -53,20 +68,20 @@ export function track(target,key) {
   activeEffect.deps.push(deps)
 }
 // 在set拦截函数内调用trigger函数触发响应变化
-export function trigger(target, key) {
+export function trigger(target: any, key: string | symbol) {
   // 变量副作用函数桶，并执行其中的函数
   const depsMap = bucket.get(target)
   if (!depsMap) return false
   const effects = depsMap.get(key)
-  const effectToRun = new Set()
-  effects && effects.forEach(effectFn => {
+  const effectToRun: Set<EffectFnType> = new Set()
+  effects && effects.forEach((effectFn: EffectFnType) => {
     // 如果trigger触发执行的副作用函数与当前正在执行的副作用函数相同，则不触发执行
     // 避免类似obj.foo++这样的无限递归调用造成栈溢出
     if (effectFn !== activeEffect) {
       effectToRun.add(effectFn)
     }
   })
-  effectToRun.forEach(effectFn => {
+  effectToRun.forEach((effectFn: EffectFnType) => {
     // 判断是否存在调度器
     if (effectFn.options.scheduler) {
       // 增加调度器的使用
@@ -77,8 +92,8 @@ export function trigger(target, key) {
   });
 }
 
-export function effect(fn, options = {}) {
-  const effectFn = () => {
+export function effect(fn: GetterHandlerType, options: OptionsType = {}) {
+  const effectFn: EffectFnType = () => {
     // 调用cleanup函数完成清理
     cleanup(effectFn)
     activeEffect = effectFn
@@ -101,7 +116,7 @@ export function effect(fn, options = {}) {
   return effectFn
 }
 // f
-function cleanup (effectFn) {
+function cleanup (effectFn: EffectFnType) {
   for (let i = 0; i < effectFn.deps.length; i++) {
     const deps = effectFn.deps[i];
     deps.delete(effectFn)
@@ -110,22 +125,22 @@ function cleanup (effectFn) {
   effectFn.deps.length = 0
 }
 
-// 定义一个任务队列
-const jobQueue = new Set()
-const p = Promise.resolve()
-// 定义一个变量标识代表是否正在刷新队列
-let isFlushing = false;
-function flushJob() {
-  if(isFlushing) {
-    return false
-  }
-  isFlushing = true
-  p.then(() => {
-    jobQueue.forEach(job => job())
-  }).finally(() => {
-    isFlushing = false
-  })
-}
+// // 定义一个任务队列
+// const jobQueue = new Set()
+// const p = Promise.resolve()
+// // 定义一个变量标识代表是否正在刷新队列
+// let isFlushing = false;
+// function flushJob() {
+//   if(isFlushing) {
+//     return false
+//   }
+//   isFlushing = true
+//   p.then(() => {
+//     jobQueue.forEach(job => job())
+//   }).finally(() => {
+//     isFlushing = false
+//   })
+// }
 
 // effect(() => {
 //   console.log(obj.foo)

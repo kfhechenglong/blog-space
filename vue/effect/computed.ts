@@ -1,4 +1,4 @@
-import {proxy, effect, trigger, track} from './index.mjs'
+import {proxy, effect, trigger, track, GetterHandlerType} from './index'
 const data = {
   foo: 1,
   bar: 2
@@ -7,14 +7,14 @@ const data = {
 const getProxy = proxy(data);
 
 // 定义计算属性
-export function computed (getter) {
-  let value = null
+export function computed (getter:GetterHandlerType) {
+  let value: any = null
   let dirty = true
   const effectFn = effect(
     getter,
     {
       lazy: true,
-      scheduler() {
+      scheduler: () => {
         // 数据响应时，将调度器中值设置为true
         if(!dirty) {
           dirty = true
