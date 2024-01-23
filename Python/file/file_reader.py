@@ -9,7 +9,7 @@ try:
     print(lines)
   for line in lines:
     pi_string+= line.strip()
-except:
+except FileNotFoundError:
   print("未获取到目标文件")
 
 print(pi_string)
